@@ -2131,6 +2131,24 @@ static ssize_t netlink_sidlist_msg_encode(int cmd,
 }
 
 /**
+ * Construct a ctx with unresolved nhe info for encoding.
+ * 
+ * @param ctx the ctx with both resolved and unresolved nhe info
+ * @param ctx_unresolved_nhe the ctx with unresolved nhe info
+ */
+static void dplane_ctx_unresolved_nhe_info_copy(struct zebra_dplane_ctx *ctx,
+					struct zebra_dplane_ctx *ctx_unresolved_nhe)
+{
+	ctx_unresolved_nhe->u.rinfo.nhe.id = ctx->u.rinfo.unresolved_nhe.id;
+	ctx_unresolved_nhe->u.rinfo.nhe.type = ctx->u.rinfo.unresolved_nhe.type;
+	ctx_unresolved_nhe->zd_ns_info.sock = ctx->zd_ns_info.sock;
+	ctx_unresolved_nhe->u.rinfo.nhe.nh_grp_count = ctx->u.rinfo.unresolved_nhe.nh_grp_count;
+	ctx_unresolved_nhe->u.rinfo.nhe.ng = ctx->u.rinfo.unresolved_nhe.ng;
+	ctx_unresolved_nhe->u.rinfo.nhe.nh_grp = ctx->u.rinfo.unresolved_nhe.nh_grp;
+	ctx_unresolved_nhe->u.rinfo.nhe.afi = ctx->u.rinfo.unresolved_nhe.afi;
+}
+
+/**
  * Encode data plane operation context into netlink and enqueue it in the FPM
  * output buffer.
  *
@@ -2146,6 +2164,7 @@ static int fpm_nl_enqueue(struct fpm_nl_ctx *fnc, struct zebra_dplane_ctx *ctx)
 	uint64_t obytes, obytes_peak;
 	enum dplane_op_e op = dplane_ctx_get_op(ctx);
 	struct nexthop *nexthop;
+	struct zebra_dplane_ctx *ctx_unresolved_nhe;
 
 	/*
 	 * If we were configured to not use next hop groups, then quit as soon
@@ -2257,8 +2276,17 @@ static int fpm_nl_enqueue(struct fpm_nl_ctx *fnc, struct zebra_dplane_ctx *ctx)
 		break;
 	case DPLANE_OP_NH_INSTALL:
 	case DPLANE_OP_NH_UPDATE:
-		rv = netlink_nexthop_msg_encode(RTM_NEWNEXTHOP, ctx, nl_buf,
-						sizeof(nl_buf), true);
+		if (CHECK_FLAG(ctx->zd_flags, DPLANE_CTX_FLAG_SRV6)) {
+			/* construct a new ctx and value some attributes 
+			 * for the following use */
+			ctx_unresolved_nhe = dplane_ctx_alloc();
+			dplane_ctx_unresolved_nhe_info_copy(ctx, ctx_unresolved_nhe);
+
+			rv = netlink_nexthop_msg_encode(RTM_NEWNEXTHOP, ctx_unresolved_nhe,
+							nl_buf, sizeof(nl_buf), true);
+		} else
+			rv = netlink_nexthop_msg_encode(RTM_NEWNEXTHOP, ctx,
+							nl_buf,	sizeof(nl_buf), true);
 		if (rv <= 0) {
 			zlog_err("%s: netlink_nexthop_msg_encode failed",
 				 __func__);
