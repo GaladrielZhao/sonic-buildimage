@@ -1,15 +1,15 @@
 From 9e789e450003b9d2c7347c9f9b0d29d9b84d525f Mon Sep 17 00:00:00 2001
 From: sudhanshukumar22 <sudhanshu.kumar@broadcom.com>
 Date: Tue, 1 Oct 2024 02:28:17 -0700
-Subject: [PATCH] Build dplane_fpm_sonic module
+[PATCH] Build dplane_fpm_sonic module
 
 From: Carmine Scarpitta <cscarpit@cisco.com>
 
 Signed-off-by: Carmine Scarpitta <cscarpit@cisco.com>
 ---
- debian/frr.install | 1 +
- zebra/subdir.am    | 6 ++++++
- 3 files changed, 8 insertions(+)
+ debian/frr.install |    1 +
+ zebra/subdir.am    |    6 ++++++
+ 2 files changed, 7 insertions(+)
 
 diff --git a/debian/frr.install b/debian/frr.install
 index d4b904b6e..375f0dadd 100644
@@ -40,6 +40,3 @@ index f76744736..c222984ae 100644
  if NETLINK_DEBUG
  zebra_zebra_SOURCES += \
  	zebra/debug_nl.c \
--- 
-2.39.4
-

@@ -1,19 +1,19 @@
-From 44f3736ee601e06e43e978fa075402c3da4823bd Mon Sep 17 00:00:00 2001
+[PATCH] From 349e3f758860be0077b69919c39764d3486ec44a Mon Sep 17
+
 From: Stepan Blyschak <stepanb@nvidia.com>
 Date: Mon, 16 Jan 2023 11:45:19 +0000
-Subject: [PATCH] From 349e3f758860be0077b69919c39764d3486ec44a Mon Sep 17
  00:00:00 2001 Subject: [PATCH] use vrf id instead of table id
 
 Signed-off-by: Stepan Blyschak <stepanb@nvidia.com>
 ---
- zebra/rt_netlink.c |   72 +++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 59 insertions(+), 13 deletions(-)
+ zebra/rt_netlink.c |   49 +++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 6 deletions(-)
 
 diff --git a/zebra/rt_netlink.c b/zebra/rt_netlink.c
-index f12b324e0..9b0599899 100644
+index 12a790025..30e8a5245 100644
 --- a/zebra/rt_netlink.c
 +++ b/zebra/rt_netlink.c
-@@ -385,6 +385,31 @@ static inline int proto2zebra(int proto, int family, bool is_nexthop)
+@@ -391,6 +391,31 @@ static inline int proto2zebra(int proto, int family, bool is_nexthop)
  	return proto;
  }
  
@@ -45,7 +45,7 @@ index f12b324e0..9b0599899 100644
  /**
   * @parse_encap_mpls() - Parses encapsulated mpls attributes
   * @tb:         Pointer to rtattr to look for nested items in.
-@@ -2530,12 +2564,24 @@ ssize_t netlink_route_multipath_msg_encode(int cmd, struct zebra_dplane_ctx *ctx
+@@ -2612,12 +2637,24 @@ ssize_t netlink_route_multipath_msg_encode(int cmd, struct zebra_dplane_ctx *ctx
  
  	/* Table corresponding to this route. */
  	table_id = dplane_ctx_get_table(ctx);
@@ -74,6 +74,5 @@ index f12b324e0..9b0599899 100644
 +				return 0;
 +		}
  	}
-
+ 
  	if (IS_ZEBRA_DEBUG_KERNEL)
- 		zlog_debug(

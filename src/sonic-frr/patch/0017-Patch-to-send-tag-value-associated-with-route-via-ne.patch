@@ -1,4 +1,5 @@
-From c0418c02dabe901f5dc39c85ce2e80bd361d7c78 Mon Sep 17 00:00:00 2001
+[PATCH] Patch to send tag value associated with route via netlink in
+
 From: Abhishek Dosi <abdosi@microsoft.com>
 Date: Wed, 11 Dec 2024 11:19:05 +0000
 Subject: [PATCH] Patch to send tag value associated with route via netlink in 
@@ -6,14 +7,14 @@ Subject: [PATCH] Patch to send tag value associated with route via netlink in
 
 Signed-off-by: Abhishek Dosi <abdosi@microsoft.com>
 ---
- zebra/rt_netlink.c | 22 ++++++++++++++++++++--
+ zebra/rt_netlink.c |   22 ++++++++++++++++++++--
  1 file changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/zebra/rt_netlink.c b/zebra/rt_netlink.c
-index 9b0599899..b94ced7e5 100644
+index 30e8a5245..50d1fc07d 100644
 --- a/zebra/rt_netlink.c
 +++ b/zebra/rt_netlink.c
-@@ -2551,10 +2551,28 @@ ssize_t netlink_route_multipath_msg_encode(int cmd, struct zebra_dplane_ctx *ctx
+@@ -2624,10 +2624,28 @@ ssize_t netlink_route_multipath_msg_encode(int cmd, struct zebra_dplane_ctx *ctx
  	 * path(s)
  	 * by the routing protocol and for communicating with protocol peers.
  	 */
@@ -44,6 +45,3 @@ index 9b0599899..b94ced7e5 100644
  #if defined(SUPPORT_REALMS)
  	if (cmd == RTM_DELROUTE)
  		tag = dplane_ctx_get_old_tag(ctx);
--- 
-2.25.1
-

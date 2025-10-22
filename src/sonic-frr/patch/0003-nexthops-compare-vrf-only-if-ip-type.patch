@@ -1,15 +1,18 @@
-From 2b778b1984c5f88500625a0e96a5ba1d1fe0316c Mon Sep 17 00:00:00 2001
+[PATCH] From 786087468520db44c55e3566f77438b41f52763f Mon Sep 17
+
 From: Pavel Shirshov <pavelsh@microsoft.com>
 Date: Mon, 16 Nov 2020 18:35:01 -0800
-Subject: [PATCH] From 786087468520db44c55e3566f77438b41f52763f Mon Sep 17
  00:00:00 2001 Subject: [PATCH 5/8] nexthops compare vrf only if ip type
-
+---
+ lib/nexthop.c |   12 ++++++------
+ lib/zclient.c |   12 ++++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/lib/nexthop.c b/lib/nexthop.c
-index c377b9cb0..6fe45b2c5 100644
+index e8f5ecf17..9381b3a89 100644
 --- a/lib/nexthop.c
 +++ b/lib/nexthop.c
-@@ -143,12 +143,6 @@ static int _nexthop_cmp_no_labels(const struct nexthop *next1,
+@@ -149,12 +149,6 @@ static int _nexthop_cmp_no_labels(const struct nexthop *next1,
  {
  	int ret = 0;
  
@@ -22,7 +25,7 @@ index c377b9cb0..6fe45b2c5 100644
  	if (next1->type < next2->type)
  		return -1;
  
-@@ -166,6 +160,12 @@ static int _nexthop_cmp_no_labels(const struct nexthop *next1,
+@@ -172,6 +166,12 @@ static int _nexthop_cmp_no_labels(const struct nexthop *next1,
  	switch (next1->type) {
  	case NEXTHOP_TYPE_IPV4:
  	case NEXTHOP_TYPE_IPV6:
@@ -36,10 +39,10 @@ index c377b9cb0..6fe45b2c5 100644
  		if (ret != 0)
  			return ret;
 diff --git a/lib/zclient.c b/lib/zclient.c
-index 5deea8f0c..28e9da721 100644
+index 558626fa3..3ab7bc040 100644
 --- a/lib/zclient.c
 +++ b/lib/zclient.c
-@@ -976,12 +976,6 @@ static int zapi_nexthop_cmp_no_labels(const struct zapi_nexthop *next1,
+@@ -982,12 +982,6 @@ static int zapi_nexthop_cmp_no_labels(const struct zapi_nexthop *next1,
  {
  	int ret = 0;
  
@@ -52,7 +55,7 @@ index 5deea8f0c..28e9da721 100644
  	if (next1->type < next2->type)
  		return -1;
  
-@@ -997,6 +991,12 @@ static int zapi_nexthop_cmp_no_labels(const struct zapi_nexthop *next1,
+@@ -1003,6 +997,12 @@ static int zapi_nexthop_cmp_no_labels(const struct zapi_nexthop *next1,
  	switch (next1->type) {
  	case NEXTHOP_TYPE_IPV4:
  	case NEXTHOP_TYPE_IPV6:
@@ -65,6 +68,3 @@ index 5deea8f0c..28e9da721 100644
  		ret = nexthop_g_addr_cmp(next1->type, &next1->gate,
  					 &next2->gate);
  		if (ret != 0)
--- 
-2.17.1
-
